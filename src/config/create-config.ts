@@ -32,6 +32,7 @@ export const createConfig = (userConfig) => {
     localeExtension,
     localePath,
     localeStructure,
+    customNextDir,
   } = combinedConfig
 
   if (isServer()) {
@@ -86,12 +87,20 @@ export const createConfig = (userConfig) => {
   } else {
 
     let clientLocalePath = localePath
+    let publicPrefix = 'public/'
+
+    /*
+      Prepend custom next directory to public prefix from client site config
+    */
+    if (customNextDir) {
+      publicPrefix = `${customNextDir}/${publicPrefix}`
+    }
     
     /*
       Remove public prefix from client site config
     */
-    if (localePath.startsWith('public/')) {
-      clientLocalePath = localePath.replace(/^public\//, '')
+    if (localePath.startsWith(publicPrefix)) {
+      clientLocalePath = localePath.replace(new RegExp(`^${publicPrefix}`), '')
     }
 
     /*
